@@ -5,8 +5,16 @@ let socket = null;
 export const initSocket = (token) => {
   if (socket) return socket;
 
-  socket = io(import.meta.env.VITE_API_URL, {
-    auth: { token }
+  // Get the base URL from the API URL (strip "/api" path)
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const baseUrl = apiUrl.replace('/api', '');
+
+  socket = io(baseUrl, {
+    auth: { token },
+    path: '/socket.io',
+    transports: ['websocket', 'polling'],
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000
   });
 
   // General socket event listeners
